@@ -1,0 +1,417 @@
+{
+  "info": {
+    "_postman_id": "c516d261-aff6-4639-9fae-4b7f6cfdff28",
+    "name": "REST_The Lord of the Rings.json",
+    "description": "# The One API - The Lord Of The Rings\n\n**base_url**\\= [https://the-one-api.dev/v2](https://the-one-api.dev/v2)\n\nRequiere token Bearer obtenido despues de registrarse e iniciar sesión.\n\n## Variables de colección\n\n- `base_url` → [https://the-one-api.dev/v2](https://the-one-api.dev/v2)\n    \n- `token` → (tu token personal de the-one-api.dev)\n    \n- `movie_id` → 5cd95395807270f3d024ed\\` (La Comunidad del Anillo)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54552080",
+    "_collection_link": "https://go.postman.co/collection/54552080-c516d261-aff6-4639-9fae-4b7f6cfdff28?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "1 - GET Todas las Películas",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('El status es 200: películas obtenidas', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Respuesta contiene array de películas', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body).to.have.property('docs');",
+              "    pm.expect(body.docs).to.be.an('array');",
+              "});",
+              "",
+              "pm.test('Hay al menos 1 película', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body.docs.length).to.be.above(0);",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/movie",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "movie"
+          ]
+        },
+        "description": "Obtiene todas las películas de El Señor de los Anillos y El Hobbit. Requiere Bearer Token."
+      },
+      "response": []
+    },
+    {
+      "name": "2 - GET Película por ID",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('El status es 200: película encontrada', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('La película tiene _id y nombre', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body.docs[0]).to.have.property('_id');",
+              "    pm.expect(body.docs[0]).to.have.property('name');",
+              "});",
+              "",
+              "pm.test('Película contiene datos de taquilla (boxOfficeRevenueInMillions)', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body.docs[0]).to.have.property('boxOfficeRevenueInMillions');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/movie/{{movie_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "movie",
+            "{{movie_id}}"
+          ]
+        },
+        "description": "Obtiene una película específica usando su _id. El movie_id se guarda automáticamente desde el request 1."
+      },
+      "response": []
+    },
+    {
+      "name": "3 - GET Personajes",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('El status es 200: personajes obtenidos', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('docs es un array de personajes', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body.docs).to.be.an('array');",
+              "});",
+              "",
+              "pm.test('Se devuelven máximo 5 personajes (limit=5)', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body.docs.length).to.be.at.most(5);",
+              "});",
+              "",
+              "pm.test('Cada personaje tiene campo name', function () {",
+              "    const body = pm.response.json();",
+              "    body.docs.forEach(function(char) {",
+              "        pm.expect(char).to.have.property('name');",
+              "    });",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/character?limit=5&page=1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "character"
+          ],
+          "query": [
+            {
+              "key": "limit",
+              "value": "5",
+              "description": "Cantidad máxima de resultados por página"
+            },
+            {
+              "key": "page",
+              "value": "1",
+              "description": "Número de página"
+            }
+          ]
+        },
+        "description": "Obtiene los personajes usando query params: limit y page. Demuestra paginación con parámetros de URL."
+      },
+      "response": []
+    },
+    {
+      "name": "4 - GET Frases Aleatorias",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('El status es 200: frases obtenidas', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Se reciben frases (docs no vacío)', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body.docs).to.be.an('array').that.is.not.empty;",
+              "});",
+              "",
+              "pm.test('Cada frase tiene el campo dialog', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body.docs[0]).to.have.property('dialog');",
+              "});",
+              "",
+              "const body = pm.response.json();",
+              "if (body.docs && body.docs.length > 0) {",
+              "    console.log('Primera frase:', body.docs[0].dialog);",
+              "}"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/quote?limit=3&page=1",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "quote"
+          ],
+          "query": [
+            {
+              "key": "limit",
+              "value": "3",
+              "description": "Retorna solo 3 frases"
+            },
+            {
+              "key": "page",
+              "value": "1",
+              "description": "Primera página"
+            }
+          ]
+        },
+        "description": "Obtiene frases icónicas de la saga usando query params limit y page."
+      },
+      "response": []
+    },
+    {
+      "name": "5 - GET Sin Token (prueba de error 401)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('El status es 401: Token requerido', function () {",
+              "    pm.response.to.have.status(401);",
+              "});",
+              "",
+              "pm.test('Respuesta contiene mensaje de error', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body).to.have.property('message');",
+              "    console.log('Error:', body.message);",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/movie",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "movie"
+          ]
+        },
+        "description": "Prueba deliberada SIN token para verificar que la API protege sus endpoints con Authorization Bearer. Debe retornar 401."
+      },
+      "response": []
+    },
+    {
+      "name": "6 - GET Frases de una Película específica",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('El status es 200: frases de la película encontradas', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('docs es un array', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body.docs).to.be.an('array');",
+              "});",
+              "",
+              "pm.test('Frases contienen dialog y referencia a movie', function () {",
+              "    const body = pm.response.json();",
+              "    if (body.docs.length > 0) {",
+              "        pm.expect(body.docs[0]).to.have.property('dialog');",
+              "        pm.expect(body.docs[0]).to.have.property('movie');",
+              "    }",
+              "});",
+              "",
+              "const body = pm.response.json();",
+              "console.log('Total frases de esta película:', body.total);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/movie/{{movie_id}}/quote",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "movie",
+            "{{movie_id}}",
+            "quote"
+          ]
+        },
+        "description": "Obtiene todas las frases que pertenecen a una película específica. Es una relación anidada: /movie/:id/quote"
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://the-one-api.dev/v2"
+    },
+    {
+      "key": "token",
+      "value": "NJmdVkn44pZ-d5ZZf7JN",
+      "description": "Token personal obtenido en https://the-one-api.dev/sign-up"
+    },
+    {
+      "key": "movie_id",
+      "value": "5cd95395807270f3d024ed",
+      "description": "ID de película — se actualiza automáticamente al ejecutar el request 1"
+    }
+  ]
+}

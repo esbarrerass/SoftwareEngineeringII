@@ -1,0 +1,350 @@
+{
+  "info": {
+    "_postman_id": "e44efd86-9180-4ffb-a073-35a0f34c45e8",
+    "name": "Tarea GraphQL — Esteban Barrera Sanabria.json",
+    "description": "**Endpoint único:** [https://countries.trevorblades.com/graphql](https://countries.trevorblades.com/graphql)\n\nTodas las queries se envían por POST al mismo endpoint.  \n\nNo requiere token ni autenticación.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54552080",
+    "_collection_link": "https://go.postman.co/collection/54552080-e44efd86-9180-4ffb-a073-35a0f34c45e8?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "1 - Todos los países",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Test 1: Status 200",
+              "pm.test('Status 200 - Query ejecutada', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "// Test 2: La respuesta tiene data.countries",
+              "pm.test('Respuesta contiene data.countries', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body).to.have.property('data');",
+              "    pm.expect(body.data).to.have.property('countries');",
+              "    pm.expect(body.data.countries).to.be.an('array');",
+              "});",
+              "",
+              "// Test 3: Hay más de 100 países",
+              "pm.test('Hay más de 100 países en la respuesta', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body.data.countries.length).to.be.above(100);",
+              "});",
+              "",
+              "// Test 4: Sin errores GraphQL",
+              "pm.test('No hay errores en la respuesta GraphQL', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body).to.not.have.property('errors');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "query TodosLosPaises {\n  countries {\n    code\n    name\n    capital\n    emoji\n  }\n}",
+            "variables": ""
+          }
+        },
+        "url": {
+          "raw": "https://countries.trevorblades.com/graphql",
+          "protocol": "https",
+          "host": [
+            "countries",
+            "trevorblades",
+            "com"
+          ],
+          "path": [
+            "graphql"
+          ]
+        },
+        "description": "Query: Obtiene todos los países con `code`, `name`, `capital` y `emoji` de su bandera."
+      },
+      "response": []
+    },
+    {
+      "name": "2 - País por filtro (Colombia)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('El status es 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('El país filtrado es Colombia', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body.data.country.name).to.eql('Colombia');",
+              "});",
+              "",
+              "pm.test('El código es CO', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body.data.country.code).to.eql('CO');",
+              "});",
+              "",
+              "pm.test('El continente es Sudámerica', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body.data.country.continent.name).to.eql('South America');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "query PaisPorCodigo($codigo: ID!) {\n  country(code: $codigo) {\n    code\n    name\n    capital\n    currency\n    phone\n    emoji\n    continent {\n      name\n    }\n    languages {\n      name\n      native\n    }\n  }\n}",
+            "variables": "{\n  \"codigo\": \"CO\"\n}"
+          }
+        },
+        "url": {
+          "raw": "https://countries.trevorblades.com/graphql",
+          "protocol": "https",
+          "host": [
+            "countries",
+            "trevorblades",
+            "com"
+          ],
+          "path": [
+            "graphql"
+          ]
+        },
+        "description": "Query (con argumento): Filtra un país por su código ISO (CO = Colombia)."
+      },
+      "response": []
+    },
+    {
+      "name": "3 - Continentes con países anidados",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('El status es 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Hay continentes en la respuesta', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body.data.continents).to.be.an('array').that.is.not.empty;",
+              "});",
+              "",
+              "pm.test('Cada continente tiene una lista de países', function () {",
+              "    const body = pm.response.json();",
+              "    body.data.continents.forEach(function(cont) {",
+              "        pm.expect(cont).to.have.property('countries');",
+              "        pm.expect(cont.countries).to.be.an('array');",
+              "    });",
+              "});",
+              "",
+              "pm.test('Sin errores GraphQL', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body).to.not.have.property('errors');",
+              "});",
+              "",
+              "const body = pm.response.json();",
+              "body.data.continents.forEach(function(c) {",
+              "    console.log(c.name + ': ' + c.countries.length + ' países');",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "query ContinentesConPaises {\n  continents {\n    code\n    name\n    countries {\n      code\n      name\n      capital\n      emoji\n    }\n  }\n}",
+            "variables": ""
+          }
+        },
+        "url": {
+          "raw": "https://countries.trevorblades.com/graphql",
+          "protocol": "https",
+          "host": [
+            "countries",
+            "trevorblades",
+            "com"
+          ],
+          "path": [
+            "graphql"
+          ]
+        },
+        "description": "Query (anidada): Obtiene todos los continentes y dentro de cada uno, la lista completa de países con sus datos."
+      },
+      "response": []
+    },
+    {
+      "name": "4 - Idiomas disponibles",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('El status es 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('Respuesta contiene lista de idiomas', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body.data.languages).to.be.an('array').that.is.not.empty;",
+              "});",
+              "",
+              "pm.test('Cada idioma tiene code y name', function () {",
+              "    const body = pm.response.json();",
+              "    body.data.languages.forEach(function(lang) {",
+              "        pm.expect(lang).to.have.property('code');",
+              "        pm.expect(lang).to.have.property('name');",
+              "    });",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "query IdiomasDisponibles {\n  languages {\n    code\n    name\n    native\n    rtl\n  }\n}",
+            "variables": ""
+          }
+        },
+        "url": {
+          "raw": "https://countries.trevorblades.com/graphql",
+          "protocol": "https",
+          "host": [
+            "countries",
+            "trevorblades",
+            "com"
+          ],
+          "path": [
+            "graphql"
+          ]
+        },
+        "description": "Query: Obtiene todos los idiomas del mundo disponibles en la API.\n\nEl campo rtl indica si el idioma es de derecha a izquierda (árabe, hebreo)."
+      },
+      "response": []
+    },
+    {
+      "name": "5 - Continente específico con países e idiomas",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('El status es 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test('El continente filtrado es SA (Sudamérica)', function () {",
+              "    const body = pm.response.json();",
+              "    pm.expect(body.data.continent.code).to.eql('SA');",
+              "});",
+              "",
+              "pm.test('Los países tienen idiomas anidados', function () {",
+              "    const body = pm.response.json();",
+              "    const paises = body.data.continent.countries;",
+              "    pm.expect(paises.length).to.be.above(0);",
+              "    pm.expect(paises[0]).to.have.property('languages');",
+              "    pm.expect(paises[0].languages).to.be.an('array');",
+              "});",
+              "",
+              "// Log de países de SA",
+              "const body = pm.response.json();",
+              "const paises = body.data.continent.countries;",
+              "console.log('Países en Sudamérica:', paises.length);",
+              "paises.forEach(function(p) {",
+              "    const idiomas = p.languages.map(l => l.name).join(', ');",
+              "    console.log(p.emoji, p.name, '—', idiomas);",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "graphql",
+          "graphql": {
+            "query": "query ContinenteConPaisesEIdiomas($codigo: ID!) {\n  continent(code: $codigo) {\n    code\n    name\n    countries {\n      code\n      name\n      capital\n      emoji\n      currency\n      languages {\n        code\n        name\n        native\n      }\n    }\n  }\n}",
+            "variables": "{\n  \"codigo\": \"SA\"\n}"
+          }
+        },
+        "url": {
+          "raw": "https://countries.trevorblades.com/graphql",
+          "protocol": "https",
+          "host": [
+            "countries",
+            "trevorblades",
+            "com"
+          ],
+          "path": [
+            "graphql"
+          ]
+        },
+        "description": "Query: Filtra un continente por código (SA = Sudamérica) y trae sus países con sus idiomas.\n\n3 niveles de anidación: continent → countries → languages."
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "graphql_url",
+      "value": "https://countries.trevorblades.com/graphql"
+    }
+  ]
+}
