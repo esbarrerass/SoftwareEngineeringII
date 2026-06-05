@@ -25,3 +25,21 @@ venv/
 .vscode/
 *.sqlite3
 *.sqlite
+
+# Android
+PruebaTecnicaAndroid/local.properties
+PruebaTecnicaAndroid/.gradle/
+PruebaTecnicaAndroid/build/
+PruebaTecnicaAndroid/app/build/
+PruebaTecnicaAndroid/app/.cxx/
+PruebaTecnicaAndroid/app/.externalNativeBuild/
+PruebaTecnicaAndroid/captures/
+PruebaTecnicaAndroid/**/*.iml
+PruebaTecnicaAndroid/.idea/
+PruebaTecnicaAndroid/*.keystore
+PruebaTecnicaAndroid/*.jks
+PruebaTecnicaAndroid/*.keystore.properties
+PruebaTecnicaAndroid/*.apk
+PruebaTecnicaAndroid/*.ap_
+PruebaTecnicaAndroid/*.log
+PruebaTecnicaAndroid/*.tmp
